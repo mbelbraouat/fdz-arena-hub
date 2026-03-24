@@ -1,118 +1,101 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Trophy, Users, BarChart3, Tv } from 'lucide-react';
+import { Trophy, Users, BarChart3, Tv, ArrowRight, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 const services = [
   {
     icon: Trophy,
-    title: 'Tournaments & Events',
-    subtitle: 'Online & Offline',
-    description: 'FDZ runs regular online and offline tournaments for CS2 and Valorant, with clear formats, brackets and rules so teams know exactly what they play for.',
-    features: ['Live Broadcast', 'Professional Production', 'Prize Pools'],
+    title: 'Tournaments',
+    description: 'Online & offline CS2 tournaments with clear formats, brackets, anti-cheat, and professional production.',
+    stats: '24 events run',
+    features: ['Swiss / Double Elim', 'Prize Pools', 'Live Broadcast'],
+    color: 'from-primary/20 to-primary/5',
   },
   {
     icon: Users,
     title: 'Leagues & Seasons',
-    subtitle: 'Structured Competition',
-    description: 'Our leagues are built around seasons, divisions and promotion/relegation, giving teams a clear path to climb through consistent performance.',
-    features: ['Division System', 'Playoff Spots', 'Recognition'],
+    description: 'Structured seasonal leagues with divisions, promotion/relegation, and playoff qualification.',
+    stats: '16 teams active',
+    features: ['Division System', 'Standings', 'Playoffs'],
+    color: 'from-cs2-gold/20 to-cs2-gold/5',
   },
   {
     icon: BarChart3,
-    title: 'Data & Stats',
-    subtitle: 'Meet DZ Portal',
-    description: 'Track player performance, team rankings and tournament results in real-time on DZ PORTAL—the complete stats hub for Algerian Counter-Strike 2.',
-    features: ['Real-time Stats', 'Player Profiles', 'Team Analytics'],
+    title: 'DZ Portal Stats',
+    description: 'Real-time player and team analytics: K/D, ADR, KAST, weapon stats, map performance, and more.',
+    stats: '2,847 players tracked',
+    features: ['Live Tracking', 'Player Profiles', 'Weapon Stats'],
+    color: 'from-cs2-blue/20 to-cs2-blue/5',
   },
   {
     icon: Tv,
     title: 'Live Broadcasting',
-    subtitle: 'Watch Every Match',
-    description: 'From open cups to invite-only events, every competition is built to be watchable, shareable and rewarding for players and viewers.',
-    features: ['HD Streaming', 'Commentary', 'Highlights'],
+    description: 'HD streaming with commentary, replays, and highlights for every major tournament match.',
+    stats: '500+ hours streamed',
+    features: ['HD Quality', 'Commentary', 'VODs'],
+    color: 'from-val-red/20 to-val-red/5',
   },
 ];
 
 export function ServicesSection() {
   return (
-    <section className="py-32 bg-background">
-      <div className="container mx-auto px-6">
-        {/* Header */}
+    <section className="py-24 bg-background relative">
+      <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14"
         >
-          <span className="inline-flex items-center px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-medium mb-6">
-            SERVICES
-          </span>
-          <h2 className="font-heading text-4xl md:text-6xl font-bold text-foreground">
-            WHAT WE BRING TO
-            <br />
-            <span className="text-gradient">ESPORT</span>
-          </h2>
+          <div>
+            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-3 block">What We Do</span>
+            <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground">
+              BUILT FOR <span className="text-gradient">COMPETITION</span>
+            </h2>
+          </div>
+          <Link to="/portal">
+            <Button variant="outline" size="sm" className="group">
+              View Portal <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </Button>
+          </Link>
         </motion.div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="group relative bg-card rounded-2xl border border-border/50 p-8 hover:border-primary/50 transition-all duration-500 overflow-hidden"
+              transition={{ delay: index * 0.08 }}
+              className="group relative bg-card rounded-xl border border-border/50 p-6 hover:border-primary/30 transition-all duration-300 overflow-hidden"
             >
-              {/* Glow effect on hover */}
-              <div className="absolute inset-0 bg-glow opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
+              {/* Subtle gradient bg */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+
               <div className="relative z-10">
-                <div className="flex items-start gap-6">
-                  <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/30 transition-colors">
-                    <service.icon className="w-7 h-7 text-primary" />
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-11 h-11 rounded-lg bg-secondary/80 border border-border/50 flex items-center justify-center group-hover:border-primary/30 transition-colors">
+                    <service.icon className="w-5 h-5 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <span className="text-primary text-sm font-medium">{service.subtitle}</span>
-                    <h3 className="font-heading text-2xl font-bold text-foreground mt-1 mb-4">
-                      {service.title}
-                    </h3>
-                    <p className="text-muted-foreground mb-6">
-                      {service.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {service.features.map((feature, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1 rounded-full bg-secondary text-sm text-muted-foreground"
-                        >
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{service.stats}</span>
+                </div>
+
+                <h3 className="font-heading text-xl font-bold text-foreground mb-2">{service.title}</h3>
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{service.description}</p>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {service.features.map((feature, i) => (
+                    <span key={i} className="px-2.5 py-1 rounded-md bg-secondary/60 text-xs text-muted-foreground font-medium">
+                      {feature}
+                    </span>
+                  ))}
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <Link to="/portal">
-            <Button variant="hero" className="group">
-              View Upcoming Events
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
-        </motion.div>
       </div>
     </section>
   );
