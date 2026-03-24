@@ -8,6 +8,7 @@ import Portal from "./pages/Portal";
 import Sponsorship from "./pages/Sponsorship";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
+import AdminSetup from "./pages/AdminSetup";
 
 const queryClient = new QueryClient();
 
