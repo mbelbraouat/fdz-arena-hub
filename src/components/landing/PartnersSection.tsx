@@ -16,27 +16,30 @@ const partners = [
 
 export function PartnersSection() {
   return (
-    <section className="py-20 bg-card/50 border-y border-border/50 overflow-hidden">
-      <div className="container mx-auto px-6 mb-12">
+    <section className="py-12 bg-card/30 border-y border-border/30 overflow-hidden">
+      <div className="container mx-auto px-4 mb-6">
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center text-muted-foreground text-sm uppercase tracking-widest"
+          className="text-center text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-medium"
         >
-          Trusted by leading organizations
+          Trusted Partners & Collaborators
         </motion.p>
       </div>
 
-      {/* Scrolling logos */}
       <div className="relative">
-        <div className="flex animate-[scroll_30s_linear_infinite]">
-          {[...partners, ...partners].map((partner, index) => (
+        {/* Fade edges */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
+
+        <div className="flex animate-[scroll_35s_linear_infinite]">
+          {[...partners, ...partners, ...partners].map((partner, index) => (
             <div
               key={index}
-              className="flex-shrink-0 px-12 flex items-center justify-center"
+              className="flex-shrink-0 px-8 md:px-12 flex items-center justify-center"
             >
-              <span className="font-heading text-xl md:text-2xl font-bold text-muted-foreground/50 hover:text-foreground transition-colors duration-300 whitespace-nowrap">
+              <span className="font-heading text-lg md:text-xl font-bold text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors duration-300 whitespace-nowrap cursor-default">
                 {partner}
               </span>
             </div>
@@ -47,7 +50,7 @@ export function PartnersSection() {
       <style>{`
         @keyframes scroll {
           0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          100% { transform: translateX(-33.33%); }
         }
       `}</style>
     </section>
