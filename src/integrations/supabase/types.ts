@@ -14,16 +14,295 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      events: {
+        Row: {
+          created_at: string
+          event_date: string | null
+          game: Database["public"]["Enums"]["game_type"]
+          id: string
+          name: string
+          prize_pool: string
+          status: string
+          teams_count: number
+          updated_at: string
+          winner: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_date?: string | null
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          name: string
+          prize_pool?: string
+          status?: string
+          teams_count?: number
+          updated_at?: string
+          winner?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_date?: string | null
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          name?: string
+          prize_pool?: string
+          status?: string
+          teams_count?: number
+          updated_at?: string
+          winner?: string | null
+        }
+        Relationships: []
+      }
+      matches: {
+        Row: {
+          created_at: string
+          half_scores: Json | null
+          id: string
+          map: string
+          match_date: string
+          score1: number
+          score2: number
+          status: string
+          team1_id: string
+          team2_id: string
+          tournament_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          half_scores?: Json | null
+          id?: string
+          map?: string
+          match_date?: string
+          score1?: number
+          score2?: number
+          status?: string
+          team1_id: string
+          team2_id: string
+          tournament_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          half_scores?: Json | null
+          id?: string
+          map?: string
+          match_date?: string
+          score1?: number
+          score2?: number
+          status?: string
+          team1_id?: string
+          team2_id?: string
+          tournament_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_team1_id_fkey"
+            columns: ["team1_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_team2_id_fkey"
+            columns: ["team2_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          adr: number
+          created_at: string
+          game: Database["public"]["Enums"]["game_type"]
+          hs_percentage: number
+          id: string
+          is_mvp: boolean
+          kast: number
+          kd: number
+          maps_played: number
+          name: string
+          rating: number
+          team_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          adr?: number
+          created_at?: string
+          game?: Database["public"]["Enums"]["game_type"]
+          hs_percentage?: number
+          id?: string
+          is_mvp?: boolean
+          kast?: number
+          kd?: number
+          maps_played?: number
+          name: string
+          rating?: number
+          team_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adr?: number
+          created_at?: string
+          game?: Database["public"]["Enums"]["game_type"]
+          hs_percentage?: number
+          id?: string
+          is_mvp?: boolean
+          kast?: number
+          kd?: number
+          maps_played?: number
+          name?: string
+          rating?: number
+          team_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string
+          game: Database["public"]["Enums"]["game_type"]
+          id: string
+          logo_url: string | null
+          losses: number
+          name: string
+          rank_change: number
+          rating: number
+          streak: string | null
+          tag: string
+          updated_at: string
+          wins: number
+        }
+        Insert: {
+          created_at?: string
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          logo_url?: string | null
+          losses?: number
+          name: string
+          rank_change?: number
+          rating?: number
+          streak?: string | null
+          tag: string
+          updated_at?: string
+          wins?: number
+        }
+        Update: {
+          created_at?: string
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          logo_url?: string | null
+          losses?: number
+          name?: string
+          rank_change?: number
+          rating?: number
+          streak?: string | null
+          tag?: string
+          updated_at?: string
+          wins?: number
+        }
+        Relationships: []
+      }
+      tournaments: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          game: Database["public"]["Enums"]["game_type"]
+          id: string
+          name: string
+          prize_pool: string
+          stage: string | null
+          start_date: string | null
+          status: string
+          teams_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          name: string
+          prize_pool?: string
+          stage?: string | null
+          start_date?: string | null
+          status?: string
+          teams_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          name?: string
+          prize_pool?: string
+          stage?: string | null
+          start_date?: string | null
+          status?: string
+          teams_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      game_type: "cs2" | "valorant"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +429,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      game_type: ["cs2", "valorant"],
+    },
   },
 } as const
