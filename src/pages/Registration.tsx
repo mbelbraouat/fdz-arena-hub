@@ -1,0 +1,246 @@
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { UserPlus, Trophy, Users, Calendar, ChevronRight, CheckCircle2, Clock, Gamepad2, Plus, X, Shield } from 'lucide-react';
+
+export default function Registration() {
+  const { toast } = useToast();
+  const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    team_name: '',
+    team_tag: '',
+    captain_name: '',
+    captain_email: '',
+    players: ['', '', '', ''],
+  });
+
+  const { data: tournaments, isLoading } = useQuery({
+    queryKey: ['public-tournaments'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tournaments')
+        .select('*')
+        .in('status', ['upcoming', 'live'])
+        .order('start_date', { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedTournament) throw new Error('Select a tournament');
+      const tournament = tournaments?.find(t => t.id === selectedTournament);
+      const { error } = await supabase.from('registrations').insert({
+        tournament_id: selectedTournament,
+        team_name: form.team_name,
+        team_tag: form.team_tag.toUpperCase(),
+        captain_name: form.captain_name,
+        captain_email: form.captain_email,
+        players: form.players.filter(p => p.trim()),
+        game: tournament?.game || 'cs2',
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: 'Registration submitted!', description: 'Your team has been registered. You will receive a confirmation email.' });
+      setForm({ team_name: '', team_tag: '', captain_name: '', captain_email: '', players: ['', '', '', ''] });
+      setSelectedTournament(null);
+    },
+    onError: (e: Error) => toast({ title: 'Registration Failed', description: e.message, variant: 'destructive' }),
+  });
+
+  const addPlayerSlot = () => setForm({ ...form, players: [...form.players, ''] });
+  const removePlayerSlot = (idx: number) => setForm({ ...form, players: form.players.filter((_, i) => i !== idx) });
+  const updatePlayer = (idx: number, val: string) => {
+    const updated = [...form.players];
+    updated[idx] = val;
+    setForm({ ...form, players: updated });
+  };
+
+  const selectedTournamentData = tournaments?.find(t => t.id === selectedTournament);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+
+      <main className="pt-28 pb-20">
+        {/* Hero */}
+        <section className="container mx-auto px-4 mb-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl">
+            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Registration</span>
+            <h1 className="font-heading text-5xl md:text-6xl font-bold text-foreground mb-4 leading-[0.95]">
+              REGISTER YOUR
+              <br />
+              <span className="text-gradient">TEAM</span>
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
+              Sign up for upcoming FDZ tournaments. Pick your tournament, assemble your roster,
+              and compete against the best teams in Algeria.
+            </p>
+          </motion.div>
+        </section>
+
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
+            {/* Tournament Selection */}
+            <div className="space-y-6">
+              <div>
+                <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-3 block">Step 1</span>
+                <h2 className="font-heading text-2xl font-bold text-foreground mb-4">Choose Tournament</h2>
+              </div>
+
+              {isLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="h-24 bg-card rounded-xl border border-border animate-pulse" />
+                  ))}
+                </div>
+              ) : tournaments?.length === 0 ? (
+                <div className="bg-card rounded-xl border border-border p-12 text-center">
+                  <Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                  <h3 className="font-heading text-lg font-bold text-foreground mb-1">No Tournaments Available</h3>
+                  <p className="text-sm text-muted-foreground">Check back soon for upcoming tournaments.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {tournaments?.map((t, i) => (
+                    <motion.div
+                      key={t.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      onClick={() => setSelectedTournament(t.id)}
+                      className={`relative bg-card rounded-xl border p-5 cursor-pointer transition-all duration-200 group ${
+                        selectedTournament === t.id
+                          ? 'border-primary ring-1 ring-primary/30'
+                          : 'border-border hover:border-primary/40'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
+                              t.game === 'cs2' ? 'bg-cs2-gold/20 text-cs2-gold' : 'bg-val-red/20 text-val-red'
+                            }`}>
+                              {t.game}
+                            </span>
+                            <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${
+                              t.status === 'live' ? 'bg-green-500/20 text-green-500' : 'bg-primary/20 text-primary'
+                            }`}>
+                              {t.status === 'live' ? '● LIVE' : 'UPCOMING'}
+                            </span>
+                          </div>
+                          <h3 className="font-heading text-lg font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
+                            {t.name}
+                          </h3>
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {t.teams_count} teams</span>
+                            <span className="flex items-center gap-1"><Trophy className="w-3 h-3" /> {t.prize_pool}</span>
+                            {t.start_date && <span>{t.start_date}</span>}
+                            {t.stage && <span className="text-primary">{t.stage}</span>}
+                          </div>
+                          {t.description && (
+                            <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{t.description}</p>
+                          )}
+                        </div>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-colors ${
+                          selectedTournament === t.id ? 'border-primary bg-primary' : 'border-border'
+                        }`}>
+                          {selectedTournament === t.id && <CheckCircle2 className="w-4 h-4 text-primary-foreground" />}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Registration Form */}
+            <div className="lg:sticky lg:top-28 h-fit">
+              <div className="bg-card rounded-xl border border-border overflow-hidden">
+                <div className="px-5 py-4 border-b border-border bg-secondary/30">
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-primary" />
+                    <span className="font-heading text-sm font-bold text-foreground uppercase tracking-wider">Team Registration</span>
+                  </div>
+                  {selectedTournamentData && (
+                    <p className="text-xs text-primary mt-1">{selectedTournamentData.name}</p>
+                  )}
+                </div>
+
+                <div className="p-5 space-y-4">
+                  <div>
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">Team Name</Label>
+                    <Input value={form.team_name} onChange={e => setForm({ ...form, team_name: e.target.value })} placeholder="e.g. Team PHOENIX" className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">Team Tag (3-5 chars)</Label>
+                    <Input value={form.team_tag} onChange={e => setForm({ ...form, team_tag: e.target.value })} placeholder="e.g. PHX" maxLength={5} className="mt-1 uppercase" />
+                  </div>
+
+                  <div className="border-t border-border pt-4">
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider mb-2 block">Captain Info</Label>
+                    <div className="space-y-3">
+                      <Input value={form.captain_name} onChange={e => setForm({ ...form, captain_name: e.target.value })} placeholder="Captain name" />
+                      <Input type="email" value={form.captain_email} onChange={e => setForm({ ...form, captain_email: e.target.value })} placeholder="Captain email" />
+                    </div>
+                  </div>
+
+                  <div className="border-t border-border pt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-xs text-muted-foreground uppercase tracking-wider">Players Roster</Label>
+                      <Button variant="ghost" size="sm" onClick={addPlayerSlot} className="h-6 text-xs">
+                        <Plus className="w-3 h-3 mr-1" /> Add
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {form.players.map((player, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground w-4">{idx + 1}.</span>
+                          <Input
+                            value={player}
+                            onChange={e => updatePlayer(idx, e.target.value)}
+                            placeholder={`Player ${idx + 1} nickname`}
+                            className="flex-1"
+                          />
+                          {form.players.length > 1 && (
+                            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => removePlayerSlot(idx)}>
+                              <X className="w-3 h-3" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Button
+                    className="w-full"
+                    disabled={!selectedTournament || !form.team_name || !form.captain_name || !form.captain_email || registerMutation.isPending}
+                    onClick={() => registerMutation.mutate()}
+                  >
+                    {registerMutation.isPending ? 'Submitting...' : 'Register Team'}
+                    <UserPlus className="w-4 h-4 ml-2" />
+                  </Button>
+
+                  <p className="text-[10px] text-muted-foreground text-center">
+                    By registering, you agree to FDZ tournament rules and code of conduct.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

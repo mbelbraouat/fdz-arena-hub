@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Trophy, Users, Target, Star, BarChart3 } from 'lucide-react';
+import { Search, Trophy, Users, Target, Star, BarChart3, Gamepad2 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { LiveMatchTicker } from '@/components/portal/LiveMatchTicker';
@@ -12,14 +12,17 @@ import { MapPool } from '@/components/portal/MapPool';
 import { TopPlayersTable } from '@/components/portal/TopPlayersTable';
 import { EventsSidebar } from '@/components/portal/EventsSidebar';
 import { QuickStats } from '@/components/portal/QuickStats';
+import { ValorantSection } from '@/components/portal/ValorantSection';
 
-type ViewType = 'overview' | 'players' | 'matches' | 'stats';
+type ViewType = 'overview' | 'players' | 'matches' | 'stats' | 'valorant';
+type GameFilter = 'cs2' | 'valorant';
 
 const views: { id: ViewType; label: string; icon: React.ElementType }[] = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
   { id: 'players', label: 'Players', icon: Star },
   { id: 'matches', label: 'Results', icon: Target },
   { id: 'stats', label: 'Stats', icon: Trophy },
+  { id: 'valorant', label: 'Valorant', icon: Gamepad2 },
 ];
 
 export default function Portal() {
@@ -30,7 +33,6 @@ export default function Portal() {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Live Match Ticker */}
       <div className="pt-20">
         <LiveMatchTicker />
       </div>
@@ -46,7 +48,7 @@ export default function Portal() {
                   onClick={() => setActiveView(view.id)}
                   className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     activeView === view.id
-                      ? 'bg-primary text-primary-foreground'
+                      ? view.id === 'valorant' ? 'bg-val-red text-primary-foreground' : 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                   }`}
                 >
@@ -73,24 +75,16 @@ export default function Portal() {
       <main className="container mx-auto px-4 py-6">
         {activeView === 'overview' && (
           <div className="space-y-6">
-            {/* Quick Stats Bar */}
             <QuickStats />
-
-            {/* HLTV-style 3-column layout */}
             <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-5">
-              {/* Left Sidebar */}
               <div className="space-y-5 order-2 lg:order-1">
                 <PlayerOfWeek />
                 <RankingSidebar />
               </div>
-
-              {/* Main Content */}
               <div className="space-y-5 order-1 lg:order-2">
                 <MatchResults />
                 <MapPool />
               </div>
-
-              {/* Right Sidebar */}
               <div className="space-y-5 order-3">
                 <EventsSidebar />
                 <WeaponStats />
@@ -99,20 +93,15 @@ export default function Portal() {
           </div>
         )}
 
-        {activeView === 'players' && (
-          <TopPlayersTable />
-        )}
-
-        {activeView === 'matches' && (
-          <MatchResults />
-        )}
-
+        {activeView === 'players' && <TopPlayersTable />}
+        {activeView === 'matches' && <MatchResults />}
         {activeView === 'stats' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <WeaponStats />
             <MapPool />
           </div>
         )}
+        {activeView === 'valorant' && <ValorantSection />}
       </main>
 
       <Footer />
