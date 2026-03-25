@@ -176,6 +176,59 @@ export type Database = {
           },
         ]
       }
+      registrations: {
+        Row: {
+          captain_email: string
+          captain_name: string
+          created_at: string
+          game: Database["public"]["Enums"]["game_type"]
+          id: string
+          notes: string | null
+          players: Json
+          status: string
+          team_name: string
+          team_tag: string
+          tournament_id: string
+          updated_at: string
+        }
+        Insert: {
+          captain_email: string
+          captain_name: string
+          created_at?: string
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          notes?: string | null
+          players?: Json
+          status?: string
+          team_name: string
+          team_tag: string
+          tournament_id: string
+          updated_at?: string
+        }
+        Update: {
+          captain_email?: string
+          captain_name?: string
+          created_at?: string
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          notes?: string | null
+          players?: Json
+          status?: string
+          team_name?: string
+          team_tag?: string
+          tournament_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registrations_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teams: {
         Row: {
           created_at: string
