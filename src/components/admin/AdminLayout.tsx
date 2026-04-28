@@ -638,15 +638,31 @@ function RegistrationsPanel() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-xs">
                 <div><span className="text-muted-foreground">Captain:</span> <span className="text-foreground">{r.captain_name}</span></div>
                 <div><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{r.captain_email}</span></div>
-                <div><span className="text-muted-foreground">Players:</span> <span className="text-foreground">{(r.players as string[])?.length || 0}</span></div>
+                <div><span className="text-muted-foreground">Roster:</span> <span className="text-foreground">{(r.players as any[])?.length || 0}</span></div>
                 <div><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{new Date(r.created_at).toLocaleDateString()}</span></div>
               </div>
 
-              {r.players && (r.players as string[]).length > 0 && (
+              {r.logo_url && (
+                <div className="flex items-center gap-2 mb-3 text-xs">
+                  <span className="text-muted-foreground">Logo:</span>
+                  <img src={r.logo_url} alt="logo" className="w-8 h-8 rounded border border-border object-cover" />
+                  <span className="text-foreground truncate">{r.logo_url}</span>
+                </div>
+              )}
+
+              {r.players && (r.players as any[]).length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-3">
-                  {(r.players as string[]).map((p: string, i: number) => (
-                    <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-secondary text-foreground">{p}</span>
-                  ))}
+                  {(r.players as any[]).map((p: any, i: number) => {
+                    const name = typeof p === 'string' ? p : p?.name;
+                    const role = typeof p === 'string' ? 'main' : p?.role || 'main';
+                    const roleColor = role === 'main' ? 'bg-primary/20 text-primary' : role === 'substitute' ? 'bg-cs2-gold/20 text-cs2-gold' : 'bg-val-red/20 text-val-red';
+                    return (
+                      <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-secondary text-foreground flex items-center gap-1.5">
+                        <span className={`px-1 py-0.5 rounded text-[9px] font-bold uppercase ${roleColor}`}>{role}</span>
+                        {name}
+                      </span>
+                    );
+                  })}
                 </div>
               )}
 
