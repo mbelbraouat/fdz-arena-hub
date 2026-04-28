@@ -1,14 +1,39 @@
 import { motion } from 'framer-motion';
 import { Users, Target, Trophy, Zap } from 'lucide-react';
-
-const stats = [
-  { label: 'Active Players', value: '2,847', icon: Users, change: '+124 this month' },
-  { label: 'Matches Played', value: '1,523', icon: Target, change: '+89 this week' },
-  { label: 'Tournaments', value: '24', icon: Trophy, change: '3 active' },
-  { label: 'Avg Rating', value: '1.08', icon: Zap, change: 'All players' },
-];
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export function QuickStats() {
+  const { data } = useQuery({
+    queryKey: ['portal-quickstats'],
+    queryFn: async () => {
+      const [players, matches, tournaments, events] = await Promise.all([
+        supabase.from('players').select('id, rating', { count: 'exact' }),
+        supabase.from('matches').select('id', { count: 'exact', head: true }),
+        supabase.from('tournaments').select('id, status', { count: 'exact' }),
+        supabase.from('events').select('id, status'),
+      ]);
+      const avgRating = players.data && players.data.length
+        ? (players.data.reduce((a: number, p: any) => a + Number(p.rating || 0), 0) / players.data.length).toFixed(2)
+        : '—';
+      const activeTournaments = tournaments.data?.filter((t: any) => t.status === 'live').length || 0;
+      return {
+        players: players.count || 0,
+        matches: matches.count || 0,
+        tournaments: tournaments.count || 0,
+        activeTournaments,
+        avgRating,
+      };
+    },
+  });
+
+  const stats = [
+    { label: 'Active Players', value: data?.players ?? '—', icon: Users, change: 'Across all teams' },
+    { label: 'Matches Played', value: data?.matches ?? '—', icon: Target, change: 'All time' },
+    { label: 'Tournaments', value: data?.tournaments ?? '—', icon: Trophy, change: `${data?.activeTournaments || 0} active` },
+    { label: 'Avg Rating', value: data?.avgRating ?? '—', icon: Zap, change: 'All players' },
+  ];
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {stats.map((stat, index) => (

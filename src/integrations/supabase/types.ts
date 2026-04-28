@@ -133,6 +133,7 @@ export type Database = {
           maps_played: number
           name: string
           rating: number
+          role: string
           team_id: string | null
           updated_at: string
         }
@@ -148,6 +149,7 @@ export type Database = {
           maps_played?: number
           name: string
           rating?: number
+          role?: string
           team_id?: string | null
           updated_at?: string
         }
@@ -163,6 +165,7 @@ export type Database = {
           maps_played?: number
           name?: string
           rating?: number
+          role?: string
           team_id?: string | null
           updated_at?: string
         }
@@ -183,6 +186,7 @@ export type Database = {
           created_at: string
           game: Database["public"]["Enums"]["game_type"]
           id: string
+          logo_url: string | null
           notes: string | null
           players: Json
           status: string
@@ -197,6 +201,7 @@ export type Database = {
           created_at?: string
           game?: Database["public"]["Enums"]["game_type"]
           id?: string
+          logo_url?: string | null
           notes?: string | null
           players?: Json
           status?: string
@@ -211,6 +216,7 @@ export type Database = {
           created_at?: string
           game?: Database["public"]["Enums"]["game_type"]
           id?: string
+          logo_url?: string | null
           notes?: string | null
           players?: Json
           status?: string
