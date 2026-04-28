@@ -10,6 +10,7 @@ import Registration from "./pages/Registration";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import AdminSetup from "./pages/AdminSetup";
+import { AdminHotkey } from "./components/AdminHotkey";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AdminHotkey />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/portal" element={<Portal />} />
